@@ -17,3 +17,12 @@ type Account struct {
 	Name      string
 	ApiKey    string
 }
+
+type Feed struct {
+	ID        uuid.UUID
+	CreatedAt time.Time
+	UpdatedAt time.Time
+	Name      string
+	Url       string
+	AccountID uuid.UUID
+}

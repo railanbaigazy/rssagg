@@ -10,9 +10,10 @@ import (
 	"github.com/railanbaigazy/rssagg/internal/database"
 )
 
-func (apiCfg *apiConfig) handlerCreateAccount(w http.ResponseWriter, r *http.Request) {
+func (apiCfg *apiConfig) handlerCreateFeed(w http.ResponseWriter, r *http.Request, account database.Account) {
 	type parameters struct {
 		Name string `json:"name"`
+		URL  string `json:"url"`
 	}
 	params := parameters{}
 	err := json.NewDecoder(r.Body).Decode(&params)
@@ -21,20 +22,18 @@ func (apiCfg *apiConfig) handlerCreateAccount(w http.ResponseWriter, r *http.Req
 		return
 	}
 
-	account, err := apiCfg.DB.CreateAccount(r.Context(), database.CreateAccountParams{
+	feed, err := apiCfg.DB.CreateFeed(r.Context(), database.CreateFeedParams{
 		ID:        uuid.New(),
 		CreatedAt: time.Now().UTC(),
 		UpdatedAt: time.Now().UTC(),
 		Name:      params.Name,
+		Url:       params.URL,
+		AccountID: account.ID,
 	})
 	if err != nil {
-		respondWithError(w, 400, fmt.Sprintf("couldn't create account: %v", err))
+		respondWithError(w, 400, fmt.Sprintf("couldn't create feed: %v", err))
 		return
 	}
 
-	respondWithJSON(w, 201, dbAccountToAccount(account))
-}
-
-func (apiCfg *apiConfig) handlerGetAccount(w http.ResponseWriter, r *http.Request, account database.Account) {
-	respondWithJSON(w, 200, dbAccountToAccount(account))
+	respondWithJSON(w, 201, dbFeedToFeed(feed))
 }
