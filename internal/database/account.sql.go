@@ -13,9 +13,11 @@ import (
 )
 
 const createAccount = `-- name: CreateAccount :one
-INSERT INTO account (id, created_at, updated_at, name)
-    VALUES ($1, $2, $3, $4)
-    RETURNING id, created_at, updated_at, name
+INSERT INTO account (id, created_at, updated_at, name, api_key)
+    VALUES ($1, $2, $3, $4, 
+    encode(sha256(random()::text::bytea), 'hex')
+    )
+    RETURNING id, created_at, updated_at, name, api_key
 `
 
 type CreateAccountParams struct {
@@ -38,6 +40,24 @@ func (q *Queries) CreateAccount(ctx context.Context, arg CreateAccountParams) (A
 		&i.CreatedAt,
 		&i.UpdatedAt,
 		&i.Name,
+		&i.ApiKey,
+	)
+	return i, err
+}
+
+const getAccountByAPIKey = `-- name: GetAccountByAPIKey :one
+SELECT id, created_at, updated_at, name, api_key FROM account WHERE api_key=$1
+`
+
+func (q *Queries) GetAccountByAPIKey(ctx context.Context, apiKey string) (Account, error) {
+	row := q.db.QueryRowContext(ctx, getAccountByAPIKey, apiKey)
+	var i Account
+	err := row.Scan(
+		&i.ID,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.Name,
+		&i.ApiKey,
 	)
 	return i, err
 }

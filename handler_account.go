@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/railanbaigazy/rssagg/internal/auth"
 	"github.com/railanbaigazy/rssagg/internal/database"
 )
 
@@ -17,7 +18,7 @@ func (apiCfg *apiConfig) handlerCreateAccount(w http.ResponseWriter, r *http.Req
 	params := parameters{}
 	err := json.NewDecoder(r.Body).Decode(&params)
 	if err != nil {
-		respondWithError(w, 400, fmt.Sprintf("Error parsing JSON: %v", err))
+		respondWithError(w, 400, fmt.Sprintf("error parsing JSON: %v", err))
 		return
 	}
 
@@ -28,9 +29,24 @@ func (apiCfg *apiConfig) handlerCreateAccount(w http.ResponseWriter, r *http.Req
 		Name:      params.Name,
 	})
 	if err != nil {
-		respondWithError(w, 400, fmt.Sprintf("Couldn't create account: %v", err))
+		respondWithError(w, 400, fmt.Sprintf("couldn't create account: %v", err))
 		return
 	}
 
-	respondWithJSON(w, 200, databaseToAccount(account))
+	respondWithJSON(w, 201, dbAccountToAccount(account))
+}
+
+func (apiCfg *apiConfig) handlerGetAccount(w http.ResponseWriter, r *http.Request) {
+	apiKey, err := auth.GetAPIKey(r.Header)
+	if err != nil {
+		respondWithError(w, 403, fmt.Sprintf("auth error: %v", err))
+		return
+	}
+	account, err := apiCfg.DB.GetAccountByAPIKey(r.Context(), apiKey)
+	if err != nil {
+		respondWithError(w, 400, fmt.Sprintf("couldn't get account: %v", err))
+		return
+	}
+
+	respondWithJSON(w, 200, dbAccountToAccount(account))
 }

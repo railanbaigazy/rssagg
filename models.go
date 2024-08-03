@@ -12,13 +12,15 @@ type Account struct {
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
 	Name      string    `json:"name"`
+	APIKey    string    `json:"api_key"`
 }
 
-func databaseToAccount(dbAccount database.Account) Account {
+func dbAccountToAccount(dbAccount database.Account) Account {
 	return Account{
 		ID:        dbAccount.ID,
 		CreatedAt: dbAccount.CreatedAt,
 		UpdatedAt: dbAccount.UpdatedAt,
 		Name:      dbAccount.Name,
+		APIKey:    dbAccount.ApiKey,
 	}
 }
