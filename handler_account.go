@@ -38,3 +38,15 @@ func (apiCfg *apiConfig) handlerCreateAccount(w http.ResponseWriter, r *http.Req
 func (apiCfg *apiConfig) handlerGetAccount(w http.ResponseWriter, r *http.Request, account database.Account) {
 	respondWithJSON(w, 200, dbAccountToAccount(account))
 }
+
+func (apiCfg *apiConfig) handlerGetPostsForAccount(w http.ResponseWriter, r *http.Request, account database.Account) {
+	posts, err := apiCfg.DB.GetPostsForAccount(r.Context(), database.GetPostsForAccountParams{
+		AccountID: account.ID,
+		Limit:     10,
+	})
+	if err != nil {
+		respondWithError(w, 400, fmt.Sprintf("couldn't get posts: %v", err))
+	}
+
+	respondWithJSON(w, 200, dbPostsToPosts(posts))
+}
