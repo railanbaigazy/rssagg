@@ -26,3 +26,11 @@ type Feed struct {
 	Url       string
 	AccountID uuid.UUID
 }
+
+type FeedFollow struct {
+	ID        uuid.UUID
+	CreatedAt time.Time
+	UpdatedAt time.Time
+	AccountID uuid.UUID
+	FeedID    uuid.UUID
+}
