@@ -248,9 +248,7 @@ Response:
     "description": "Productivity guru shares the secret of being super active",
     "url": "https://anotherpodcast.com/entertain/245/",
     "published_at": "2024-07-26T05:00:00+05:00",
-    "feed_id": "565443
-
-a9-4eb6-4f15-beb0-400d8bf64c57"
+    "feed_id": "565443a9-4eb6-4f15-beb0-400d8bf64c57"
   }
 ]
 ```
