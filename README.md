@@ -17,8 +17,9 @@ DB_URL=postgres://username:password@host:port/database
 Install Goose and run the migrations:
 ```sh
 go install github.com/pressly/goose/v3/cmd/goose@latest
-goose -dir ./migrations postgres $DB_URL up
+goose postgres $DB_URL up
 ```
+*$DB_URL as in your .env*
 
 ### 3. Start the Server
 
